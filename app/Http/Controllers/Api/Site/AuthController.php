@@ -13,7 +13,8 @@ use App\Services\TwilioOtpService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller {
 
@@ -29,17 +30,23 @@ class AuthController extends Controller {
         $this->userRepository = $userRepository;
     }
 
-    public function login( LoginRequest $request ): \Illuminate\Http\JsonResponse {
+    public function login( LoginRequest $request ): JsonResponse {
 
         $user = User::where( 'username', $request->username )->first();
 
-        if ( !$user->is_active ) return response()->json( [ 'message'=>'Account is not Activated' ], Response::HTTP_UNAUTHORIZED );
+        if(!$user) return response()->json( [ 'message'=>'User Not Found' ], Response::HTTP_UNAUTHORIZED );
+
+        if(!$user->is_active ) return response()->json( [ 'message'=>'Account is not Activated' ], Response::HTTP_UNAUTHORIZED );
 
         $credentials = $request->only( [ 'username', 'password' ] );
 
-        if ( !$token = auth( 'user-api' )->attempt( $credentials ) ) {
-            return response()->json( [ 'message'=>'Invalid Credentials' ], 401 );
+        if (!auth( 'user-api' )->attempt( $credentials ) ) {
+            return response()->json( [ 'message'=>'Invalid Credentials' ], JsonResponse::HTTP_UNAUTHORIZED );
         }
+
+        $user = Auth::guard('user-api')->user();
+
+        $token =  $user->createToken(config('sanctum.jwt-secret'),['user'])->plainTextToken;
 
         return response()->json( [
             'message' => 'Login Successfully',
@@ -48,7 +55,7 @@ class AuthController extends Controller {
         ], Response::HTTP_OK );
     }
 
-    public function register( RegisterRequest $request ): \Illuminate\Http\JsonResponse {
+    public function register( RegisterRequest $request ): JsonResponse {
 
         $user = User::create( [
             'name'=> $request->name,
@@ -76,7 +83,7 @@ class AuthController extends Controller {
         }
     }
 
-    public function verifyAccount( VerifyAccountRequest $request ): \Illuminate\Http\JsonResponse {
+    public function verifyAccount( VerifyAccountRequest $request ): JsonResponse {
 
         $otp = Otp::where( 'code', $request->code )->where( 'expire_at', '>', now() )->first();
 
@@ -107,7 +114,7 @@ class AuthController extends Controller {
     }
 
 
-    public function resendOtp( Request $request ): \Illuminate\Http\JsonResponse {
+    public function resendOtp( Request $request ): JsonResponse {
 
         $user = User::where( 'mobile', $request->mobile )->first();
 

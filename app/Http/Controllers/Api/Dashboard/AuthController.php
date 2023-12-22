@@ -8,10 +8,12 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
+
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request): \Illuminate\Http\JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
 
         $admin = Admin::where( 'username', $request->username )->first();
@@ -25,11 +27,8 @@ class AuthController extends Controller
         }
 
         $admin = Auth::guard('admin-api')->user();
-        // dd(config('sanctum.jwt-secret'));
 
-        $token =  $admin->createToken(config('sanctum.jwt-secret'))->plainTextToken;
-
-        // dd($token);
+        $token =  $admin->createToken(config('sanctum.jwt-secret'),['admin'])->plainTextToken;
 
         return response()->json( [
             'message' => 'Login Successfully',

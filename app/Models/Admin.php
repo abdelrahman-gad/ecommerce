@@ -14,6 +14,8 @@ class Admin extends Authenticatable
 {
     use HasFactory,SoftDeletes,Notifiable,HasApiTokens;
 
+    protected $guard = 'admin-api';
+
     protected $fillable = [
         'name',
         'username',

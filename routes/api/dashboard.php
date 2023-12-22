@@ -12,7 +12,7 @@ Route::
     ->group(function(){
         Route::post('login',[AuthController::class,'login']);
 
-        Route::middleware('auth:admin-api')->group(function(){
+        Route::middleware(['auth:sanctum','abilities:admin'])->group(function(){
             //product routes resource all excep create and edit and update
 
             Route::get('products',[ProductController::class,'index']);
@@ -20,7 +20,7 @@ Route::
             Route::get('products/{id}',[ProductController::class,'show']);
             Route::delete('products/{id}',[ProductController::class,'destroy']);
             // route for update product
-            
+
 
         });
     });
