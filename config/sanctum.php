@@ -33,7 +33,7 @@ return [
     |
     */
 
-    'guard' => ['web'],
+    'guard' => ['web','admin-api','user-api'],
 
     /*
     |--------------------------------------------------------------------------
@@ -80,4 +80,5 @@ return [
         'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
     ],
 
+    'jwt-secret' => env('JWT_SECRET'),
 ];

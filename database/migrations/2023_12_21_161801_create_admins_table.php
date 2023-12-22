@@ -11,23 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
             $table->string('name')->nullable();
-            $table->string('mobile')->unique();
-            $table->timestamp('mobile_verified_at')->nullable();
-            $table->string('avatar')->nullable();
-            $table->boolean('is_active')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->string('password');
-            $table->rememberToken();
+            $table->string('avatar')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('admins');
     }
 };
