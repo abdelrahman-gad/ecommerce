@@ -8,7 +8,7 @@ use App\Http\Requests\Api\Site\RegisterRequest;
 use App\Http\Requests\Api\Site\VerifyAccountRequest;
 use App\Models\Otp;
 use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Repositories\Eloquents\UserRepository;
 use App\Services\TwilioOtpService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;

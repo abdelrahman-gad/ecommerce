@@ -13,14 +13,10 @@ Route::
         Route::post('login',[AuthController::class,'login']);
 
         Route::middleware(['auth:sanctum','abilities:admin'])->group(function(){
-            //product routes resource all excep create and edit and update
-
             Route::get('products',[ProductController::class,'index']);
             Route::post('products',[ProductController::class,'store']);
+            Route::post('products-update',[ProductController::class,'update']);
             Route::get('products/{id}',[ProductController::class,'show']);
             Route::delete('products/{id}',[ProductController::class,'destroy']);
-            // route for update product
-
-
         });
     });

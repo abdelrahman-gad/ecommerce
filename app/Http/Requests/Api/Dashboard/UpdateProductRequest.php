@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\Dashboard;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,24 +22,25 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|string|max:255|unique:products,name',
-            'description'=>'nullable',
-            'slug'=>'required|unique:products,slug',
-            'is_active'=>'required|boolean',
+            'id'=>'required|exists:products,id',
+            'name'=>'sometimes|string|max:255|unique:products,name,'.$this->id,          
+            'description'=>'sometimes',
+            'slug'=>'sometimes|unique:products,slug,'.$this->id,
+            'is_active'=>'sometimes|boolean',
             'image'=> 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'price'=> 'required|array',
+            'price'=> 'sometimes|array',
             'price.normal'=> [
-                'required',
+                'sometimes',
                 'numeric',
                 'gt:0'
             ],
             'price.silver'=> [
-                'required',
+                'sometimes',
                 'numeric',
                 'lte:price.normal',
             ],
             'price.gold'=>  [
-                'required',
+                'sometimes',
                 'numeric',
                 'lte:price.silver',
             ],

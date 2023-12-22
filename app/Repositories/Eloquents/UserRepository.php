@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Eloquents;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     protected Model $model;
     public function __construct()

@@ -12,9 +12,11 @@ class Price extends Model
     use HasFactory,SoftDeletes;
 
     protected $fillable = [
-        'name',
         'price',
+        'product_id',
         'is_active',
+        'user_type_id'
+
     ];
 
     protected $casts = [
@@ -27,7 +29,7 @@ class Price extends Model
     }
 
     public function userTypes(): BelongsTo{
-        return $this->belongsTo(UserType::class);
+        return $this->belongsTo(UserType::class,'user_type_id','id');
     }
 
 

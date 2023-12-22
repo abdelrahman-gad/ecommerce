@@ -1,8 +1,10 @@
 <?php
 namespace App\Providers;
 
-use App\Repositories\ProductRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\Eloquents\BaseRepository;
+use App\Repositories\Eloquents\ProductRepository;
+use App\Repositories\Eloquents\UserRepository;
+use App\Repositories\Interfaces\BaseRepositoryInterface;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -14,8 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(BaseRepositoryInterface::class, BaseRepository::class);
         $this->app->bind( UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(ProductRepositoryInterface::class,ProductRepository::class);
+        $this->app->bind( ProductRepositoryInterface::class, ProductRepository::class);
     }
 
     /**
@@ -23,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        
         //
     }
 }

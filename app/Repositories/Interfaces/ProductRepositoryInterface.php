@@ -1,10 +1,7 @@
 <?php
 namespace App\Repositories\Interfaces;
 
-interface ProductRepositoryInterface{
-    public function create($data);
-    public function update($data,$id);
-    public function delete($id);
-    public function find($id);
-    public function all();
+interface ProductRepositoryInterface extends BaseRepositoryInterface{
+    public function assignPricesToProduct($productId,$prices);
+    public function updateProductPrices($productId,$prices);
 }
