@@ -16,24 +16,32 @@ class ProductController extends Controller {
     $this->productRepository = $productRepository;
    }
 
-    public function index():JsonResponse {
-        return response()->json( [
-            'status'=>true,
-            'message'=>'Product list',
-            'data'=>[]
-        ] );
-    }
-
     public function store( StoreProductRequest $request) {
+        
+        
 
-        dd('gdfmg');
+
         $this->productRepository->create($request->validated());
+
+
+
+
 
         return response()->json( [
             'status'=>true,
             'message'=>'Product created',
             'data'=>[]
         ]);
+    
+    
+    }
+
+    public function index():JsonResponse {
+        return response()->json( [
+            'status'=>true,
+            'message'=>'Product list',
+            'data'=>[]
+        ] );
     }
 
 }
