@@ -117,7 +117,7 @@ class AuthController extends Controller {
             ], Response::HTTP_UNPROCESSABLE_ENTITY );
         }
 
-        $this->userRepositoryr->update( [
+        $this->userRepository->update( $user->id  , [
             'mobile_verified_at' => now(),
             'is_active' => true
         ] );
