@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api\Site;
+namespace App\Http\Requests\Api\Dashboard\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyAccountRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,8 @@ class VerifyAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code'=>'required|exists:otps,code'
+            'username' => 'required|string',
+            'password' => 'required|string|min:6',
         ];
     }
 }

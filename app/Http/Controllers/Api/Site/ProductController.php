@@ -22,7 +22,7 @@ class ProductController extends Controller
         $perPage = $request->perPage ?? 10;
         
         $user = Auth::user()->with(['type'])->first();
-     
+      
         $userType = $user->type;
 
         $user_type_id =  $userType->id;

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\UserType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -32,6 +33,7 @@ class UserFactory extends Factory
             'avatar' => 'https://avatars.githubusercontent.com/u/18090930?v=4',
             'username' => fake()->userName(),
             'mobile' => fake()->phoneNumber(),
+            'type_id' => UserType::where('name', 'normal')->first()->id,
         ];
     }
 

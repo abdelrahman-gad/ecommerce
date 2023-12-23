@@ -13,46 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // WithoutModelEvents::class;
 
-       $this->seedUserRecord();
-       $this->seedAdmninRecord();
-    }
-
-    public function seedUserRecord(){
-        \App\Models\User::factory()->create([
-            'mobile' => "0123456789",
-            'username' => "user@user.com",
-            'password' => Hash::make('password'),
-            'name' => 'Abdelrahman Gad',
-            'mobile_verified_at' => now(),
-            'is_active' => true,
-            'avatar' => 'https://avatars.githubusercontent.com/u/18090930?v=4',
+        $this->call([
+            UserTypeSeeder::class,
+            UserSeeder::class,
+            AdminSeeder::class,
         ]);
-    }
 
-    public function seedAdmninRecord(){
-        \App\Models\Admin::factory()->create([
-            'username' => "admin@admin.com",
-            'password' => Hash::make('password'),
-            'name' => 'Abdelrahman Gad',
-            'is_active' => true,
-        ]);
-    }
-
-    public function seedUserTypeRecord(){
-
-        $userTypes = [
-            'normal',
-            'silver',
-            'gold',
-        ];
-
-        foreach ($userTypes as $userType) {
-            \App\Models\UserType::factory()->create([
-                'name' => $userType,
-            ]);
-        }
     }
 
 }

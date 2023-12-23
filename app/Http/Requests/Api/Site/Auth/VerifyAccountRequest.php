@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api\Site;
-
+namespace App\Http\Requests\Api\Site\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class VerifyAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username'=>'required|unique:users,username',
-            'mobile'=>'required|unique:users,mobile',
-            'password'=>'required|min:6|confirmed',
+            'code'=>'required|exists:otps,code'
         ];
     }
 }

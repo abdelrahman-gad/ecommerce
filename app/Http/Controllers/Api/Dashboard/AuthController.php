@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Dashboard\LoginRequest;
+use App\Http\Requests\Api\Dashboard\Auth\LoginRequest;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,4 +36,15 @@ class AuthController extends Controller
             'user' => auth( 'admin-api' )->user()
         ], Response::HTTP_OK );
     }
+
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json( [
+            'message' => 'Logout Successfully',
+        ], Response::HTTP_OK );
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquents;
 
+use App\Models\Product;
 use App\Models\UserType;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;

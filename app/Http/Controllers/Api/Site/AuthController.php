@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\Site;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Site\LoginRequest;
-use App\Http\Requests\Api\Site\RegisterRequest;
-use App\Http\Requests\Api\Site\VerifyAccountRequest;
+use App\Http\Requests\Api\Site\Auth\LoginRequest;
+use App\Http\Requests\Api\Site\Auth\RegisterRequest;
+use App\Http\Requests\Api\Site\Auth\VerifyAccountRequest;
 use App\Models\Otp;
 use App\Models\User;
 use App\Repositories\Eloquents\UserRepository;
@@ -15,8 +15,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\FileStorageHandler;
 
 class AuthController extends Controller {
+
+    use FileStorageHandler;
 
     protected TwilioOtpService  $twilioOtpService;
     protected UserRepository $userRepository;
@@ -57,12 +60,19 @@ class AuthController extends Controller {
 
     public function register( RegisterRequest $request ): JsonResponse {
 
-        $user = User::create( [
+        if ( $request->hasFile( 'avatar' ) ) {
+            $avatar = $this->storeFile( $request->image );
+        }
+
+        $userReq = [
             'name'=> $request->name,
             'username'=> $request->username,
             'mobile' => $request->mobile,
             'password'=> Hash::make( $request->password ),
-        ]);
+            'avatar'=> $avatar ?? null ,
+        ];
+
+        $user = User::create( $userReq);
 
         $otpCode = $this->twilioOtpService->generateOtp();
 
@@ -141,6 +151,15 @@ class AuthController extends Controller {
                 'message' => 'Error Sending Otp'
             ], Response::HTTP_INTERNAL_SERVER_ERROR );
         }
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json( [
+            'message' => 'Logout Successfully',
+        ], Response::HTTP_OK );
     }
 
 

@@ -15,6 +15,10 @@ Route::
         Route::post('resend-otp',[AuthController::class,'resendOtp']);
 
         Route::middleware(['auth:sanctum','abilities:user'])->group(function(){
+
+            Route::get('logout',[AuthController::class,'logout']);
+
+            // Products
             Route::get('products',[ProductController::class,'index']);
             Route::get('products/{id}',[ProductController::class,'show']);
         });

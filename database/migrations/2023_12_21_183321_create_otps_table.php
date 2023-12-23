@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('otps', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-            $table->string('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamp('expire_at')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

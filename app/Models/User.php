@@ -14,6 +14,7 @@ class User extends Authenticatable
 
     protected $guard = 'user-api';
 
+    
     /**
      * The attributes that are mass assignable.
      *

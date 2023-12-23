@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Dashboard\StoreProductRequest;
-use App\Http\Requests\Api\Dashboard\UpdateProductRequest;
+use App\Http\Requests\Api\Dashboard\Product\StoreProductRequest;
+use App\Http\Requests\Api\Dashboard\Product\UpdateProductRequest;
 use App\Http\Resources\Dashboard\ProductResource;
 use App\Repositories\Eloquents\ProductRepository;
 use App\Traits\FileStorageHandler;
@@ -54,7 +54,7 @@ class ProductController extends Controller {
             'description'=>$request->description,
             'slug'=>$request->slug,
             'is_active'=>$request->is_active,
-            'image'=>$image,
+            'image'=> $image ?? null ,
         ];
 
         $product = $this->productRepository->create( $productReq );
