@@ -56,7 +56,7 @@ To run feature tests:
 php artisan test 
 ```
 
-### Seeding database with default credentials
+### Seeding database
 
 To run tests:
 
