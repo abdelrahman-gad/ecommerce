@@ -11,6 +11,7 @@ use App\Traits\FileStorageHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller {
@@ -68,6 +69,7 @@ class ProductController extends Controller {
             DB::commit();
             return (new ProductResource($product))->response(); 
         } catch (\Exception $e) {
+            Log::info("message: ".$e->getMessage()." file: ".$e->getFile()." line: ".$e->getLine()." trace: ".$e->getTraceAsString()."");
             DB::rollBack();
             return response()->json([
                 'message'=>'Something went wrong'
@@ -101,6 +103,7 @@ class ProductController extends Controller {
             $product = $this->productRepository->find($request->id);
             return (new ProductResource($product))->response();
         }catch(\Exception $e){
+            Log::info("message: ".$e->getMessage()." file: ".$e->getFile()." line: ".$e->getLine()." trace: ".$e->getTraceAsString()."");
             DB::rollBack();
             return response()->json([
                 'message'=>'Something went wrong'
