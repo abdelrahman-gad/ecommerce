@@ -10,6 +10,7 @@ use App\Repositories\Eloquents\ProductRepository;
 use App\Traits\FileStorageHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller {
@@ -45,45 +46,66 @@ class ProductController extends Controller {
 
     public function store( StoreProductRequest $request ) {
 
-        if ( $request->hasFile( 'image' ) ) {
-            $image = $this->storeFile( $request->image );
+        try {
+            DB::beginTransaction();
+            $image = null;
+            if ( $request->hasFile( 'image' ) ) {
+                $image = $this->storeFile( $request->image );
+            }
+
+            $productReq = [
+                'name'=>$request->name,
+                'description'=>$request->description,
+                'slug'=>$request->slug,
+                'is_active'=>$request->is_active,
+                'image'=> $image ?? null ,
+            ];
+
+            $product = $this->productRepository->create( $productReq );
+
+            $this->productRepository->assignPricesToProduct( $product->id, $request->price );
+
+            DB::commit();
+            return (new ProductResource($product))->response(); 
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message'=>'Something went wrong'
+            ],Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $productReq = [
-            'name'=>$request->name,
-            'description'=>$request->description,
-            'slug'=>$request->slug,
-            'is_active'=>$request->is_active,
-            'image'=> $image ?? null ,
-        ];
-
-        $product = $this->productRepository->create( $productReq );
-
-        $this->productRepository->assignPricesToProduct( $product->id, $request->price );
-
-        return (new ProductResource($product))->response(); 
-
     }
 
 
     public function update(UpdateProductRequest $request):JsonResponse{
 
-        if ( $request->hasFile( 'image' ) ) {
-            $image = $this->storeFile( $request->image );
-            $request->merge(['image'=>$image]);
-        }
+        try{
+            DB::beginTransaction();
+            $image = null;
+            if ( $request->hasFile( 'image' ) ) {
+                $image = $this->storeFile( $request->image );
+            }
 
-        if($request->has('price')){
+            $productReq = [
+                'name'=>$request->name,
+                'description'=>$request->description,
+                'slug'=>$request->slug,
+                'is_active'=>$request->is_active,
+                'image'=> $image ?? null ,
+            ];
+
+            $this->productRepository->update( $productReq, $request->id );
+
             $this->productRepository->updateProductPrices( $request->id, $request->price );
+
+            DB::commit();
+            $product = $this->productRepository->find($request->id);
+            return (new ProductResource($product))->response();
+        }catch(\Exception $e){
+            DB::rollBack();
+            return response()->json([
+                'message'=>'Something went wrong'
+            ],Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $productData = $request->except(['price']);
-
-        $this->productRepository->update($productData,$request->id);
-
-        $product = $this->productRepository->find($request->id);
-
-        return (new ProductResource($product))->response();
     }
 
     public function destroy(string $id){
