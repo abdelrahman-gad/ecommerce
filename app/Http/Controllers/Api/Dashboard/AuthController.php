@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Dashboard\Auth\LoginRequest;
 use App\Models\Admin;
+use App\Repositories\Eloquents\UserRepository;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
+
     public function login(LoginRequest $request): JsonResponse
     {
 

@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Site\Auth\RegisterRequest;
 use App\Http\Requests\Api\Site\Auth\VerifyAccountRequest;
 use App\Models\Otp;
 use App\Models\User;
+use App\Repositories\Eloquents\OtpRepository;
 use App\Repositories\Eloquents\UserRepository;
 use App\Services\TwilioOtpService;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,19 +24,22 @@ class AuthController extends Controller {
 
     protected TwilioOtpService  $twilioOtpService;
     protected UserRepository $userRepository;
+    protected OtpRepository $otpRepository;
 
     public function __construct(
         TwilioOtpService $twilioOtpService,
-        UserRepository $userRepository
-
+        UserRepository $userRepository,
+        OtpRepository $otpRepository
         ) {
         $this->twilioOtpService = $twilioOtpService;
         $this->userRepository = $userRepository;
+        $this->otpRepository = $otpRepository;
     }
 
     public function login( LoginRequest $request ): JsonResponse {
 
-        $user = User::where( 'username', $request->username )->first();
+        $user = $this->userRepository->whereColumns(['username'=>$request->username])->first();
+
 
         if(!$user) return response()->json( [ 'message'=>'User Not Found' ], Response::HTTP_UNAUTHORIZED );
 
@@ -72,11 +76,11 @@ class AuthController extends Controller {
             'avatar'=> $avatar ?? null ,
         ];
 
-        $user = User::create( $userReq);
+        $user = $this->userRepository->create( $userReq );
 
         $otpCode = $this->twilioOtpService->generateOtp();
 
-        Otp::create( [
+        $this->otpRepository->create( [
             'user_id'=> $user->id,
             'code'=> $otpCode,
             'expire_at'=> now()->addMinutes( 5 )
@@ -95,7 +99,9 @@ class AuthController extends Controller {
 
     public function verifyAccount( VerifyAccountRequest $request ): JsonResponse {
 
-        $otp = Otp::where( 'code', $request->code )->where( 'expire_at', '>', now() )->first();
+        $otp = $this->otpRepository->where('code',$request->code)
+                                    ->where('expire_at','>',now())                     
+                                    ->first();
 
         if ( !$otp ) {
             return response()->json( [
@@ -103,7 +109,7 @@ class AuthController extends Controller {
             ], Response::HTTP_UNPROCESSABLE_ENTITY );
         }
 
-        $user = User::where( 'id', $otp->user_id )->first();
+        $user = $this->userRepository->find( $otp->user_id );
 
         if ( !$user ) {
             return response()->json( [
@@ -111,7 +117,7 @@ class AuthController extends Controller {
             ], Response::HTTP_UNPROCESSABLE_ENTITY );
         }
 
-        $user->update( [
+        $this->userRepositoryr->update( [
             'mobile_verified_at' => now(),
             'is_active' => true
         ] );
@@ -126,7 +132,7 @@ class AuthController extends Controller {
 
     public function resendOtp( Request $request ): JsonResponse {
 
-        $user = User::where( 'mobile', $request->mobile )->first();
+        $user = $this->userRepository->whereColumns(['username'=>$request->username])->first();
 
         if ( !$user ) {
             return response()->json( [
@@ -136,11 +142,12 @@ class AuthController extends Controller {
 
         $otpCode = $this->twilioOtpService->generateOtp();
 
-        Otp::create( [
+        $this->otpRepository->create([
             'user_id'=> $user->id,
             'code'=> $otpCode,
             'expire_at'=> now()->addMinutes( 5 )
-        ] );
+        ]);
+       
 
         if ( $this->twilioOtpService->sendOtp( $request->mobile, $otpCode ) ) {
             return response()->json( [
