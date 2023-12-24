@@ -33,5 +33,9 @@ class Price extends Model
     }
 
 
+    //create  accessor for price
+    public function getPriceAttribute($value): string{
+        return  number_format($value,2);
+    }
 
 }

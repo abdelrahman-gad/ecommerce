@@ -42,7 +42,16 @@ Follow these steps to get the project running:
 
 5. Update the `.env` file with your database credentials.
 
-6. Run database migrations:
+6. Update .env Variables
+
+```
+TWILIO_SID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_FROM=xxxxxxxxxxx
+JWT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+7. Run database migrations:
 
     ```bash
     php artisan migrate
@@ -50,7 +59,7 @@ Follow these steps to get the project running:
 
 ### Running Tests
 
-To run feature tests:
+To run tests
 
 ```bash
 php artisan test 
