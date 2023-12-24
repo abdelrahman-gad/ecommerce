@@ -42,7 +42,17 @@ Follow these steps to get the project running:
 
 5. Update the `.env` file with your database credentials.
 
-6. Update .env Variables
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=dbname
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+
+6. Update `.env` Variables
 
 ```
 TWILIO_SID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
